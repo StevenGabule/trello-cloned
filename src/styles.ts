@@ -9,14 +9,14 @@ export const AppContainer = styled.div`
   padding: 20px;
   width: 100%;
 `
-interface DragPreviewContainerProps {
+type DragPreviewContainerProps = {
   isHidden?: boolean
   isPreview?: boolean
 }
 
 export const DragPreviewContainer = styled.div<DragPreviewContainerProps>`
-  transform: ${props => (props.isPreview ? "rotate(5deg)" : undefined)}
-  opacity: ${props => (props.isHidden ? 0 : 1)}
+  transform: ${props => (props.isPreview ? "rotate(5deg)" : undefined)};
+  opacity: ${props => (props.isHidden ? 0 : 1)};
 `
 
 
@@ -108,13 +108,13 @@ export const NewItemButton = styled.button`
   text-align: center;
 `
 
-export const AddItemButtonDark = styled(AddItemButton)`
-  background-color: #ffffff3d;
-  color: #000;
-  &:hover {
-    background-color: #091e4214;
-  }
-`
+// export const AddItemButtonDark = styled(AddItemButton)`
+//   background-color: #ffffff3d;
+//   color: #000;
+//   &:hover {
+//     background-color: #091e4214;
+//   }
+// `
 
 export const CustomDragLayerContainer = styled.div`
   height: 100%;

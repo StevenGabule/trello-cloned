@@ -4,23 +4,27 @@ import { DragItem } from '../DragItem';
 import { Action } from './actions'
 
 export type Task = {
-  id: string;
-  text: string;
+  id: string
+  text: string
 };
 
 export type List = {
-  id: string;
-  text: string;
-  tasks: Task[];
+  id: string
+  text: string
+  tasks: Task[]
 };
 
 export type AppState = {
-  lists: List[];
-  draggedItem: DragItem | null;
+  draggedItem: DragItem | null
+  lists: List[]
 };
 
 export const AppStateReducer = (draft: AppState, action: Action): AppState | void => {
   switch (action.type) {
+    case "SET_DRAGGED_ITEM": {
+      draft.draggedItem = action.payload;
+      break;
+    }
     case "ADD_LIST": {
       draft.lists.push({
         id: nanoid(),
@@ -35,7 +39,6 @@ export const AppStateReducer = (draft: AppState, action: Action): AppState | voi
       draft.lists[targetListIndex].tasks.push({ id: nanoid(), text })
       break;
     }
-
     case "MOVE_LIST": {
       const { draggedId, hoverId } = action.payload;
       const dragIndex = findItemIndexById(draft.lists, draggedId)
@@ -43,12 +46,6 @@ export const AppStateReducer = (draft: AppState, action: Action): AppState | voi
       draft.lists = moveItem(draft.lists, dragIndex, hoverIndex)
       break;
     }
-
-    case "SET_DRAGGED_ITEM": {
-      draft.draggedItem = action.payload;
-      break;
-    }
-
     case "MOVE_TASK": {
       const { draggedItemId, hoveredItemId, sourceColumnId, targetColumnId } = action.payload
       const sourceListIndex = findItemIndexById(draft.lists, sourceColumnId)

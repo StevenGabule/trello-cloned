@@ -1,10 +1,10 @@
 import { useRef } from "react";
-import { useDrop } from "react-dnd";
-import { moveTask } from "./state/actions";
-import { useAppState } from "./state/AppStateContext";
 import { CardContainer } from "./styles";
-import { isHidden } from "./utils/isHidden";
 import { useItemDrag } from "./utils/useItemDrag";
+import { useDrop } from "react-dnd";
+import { useAppState } from "./state/AppStateContext";
+import { isHidden } from "./utils/isHidden";
+import { moveTask, setDraggedItem } from "./state/actions";
 
 type CardProps = {
   id: string;
@@ -16,13 +16,7 @@ type CardProps = {
 export const Card = ({ id, text, columnId, isPreview }: CardProps) => {
   const { draggedItem, dispatch } = useAppState();
   const ref = useRef<HTMLDivElement>(null);
-
-  const { drag } = useItemDrag({
-    type: "CARD",
-    id,
-    text,
-    columnId,
-  });
+  const { drag } = useItemDrag({ type: "CARD", id, text, columnId });
 
   const [, drop] = useDrop({
     accept: "CARD",
@@ -31,13 +25,14 @@ export const Card = ({ id, text, columnId, isPreview }: CardProps) => {
       if (draggedItem.type !== "CARD") return;
       if (draggedItem.id === id) return;
       dispatch(moveTask(draggedItem.id, id, draggedItem.columnId, columnId));
+      dispatch(setDraggedItem({ ...draggedItem, columnId }));
     },
   });
 
   drag(drop(ref));
 
   return (
-    <CardContainer ref={ref} isHidden={isHidden(draggedItem, "CARD", id, isPreview)}>
+    <CardContainer ref={ref} isPreview={isPreview} isHidden={isHidden(draggedItem, "CARD", id, isPreview)}>
       {text}
     </CardContainer>
   );

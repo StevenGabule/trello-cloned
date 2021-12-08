@@ -1,13 +1,12 @@
 import { PropsWithChildren, useRef } from "react";
-import { useDrop } from "react-dnd";
-import { AddNewItem } from "./AddNewItem";
-import { Card } from "./Card";
-import { DragItem } from "./DragItem";
-import { addTask, moveList, moveTask, setDraggedItem } from "./state/actions";
-import { useAppState } from "./state/AppStateContext";
 import { ColumnContainer, ColumnTitle } from "./styles";
-import { isHidden } from "./utils/isHidden";
+import { useAppState } from "./state/AppStateContext";
+import { Card } from "./Card";
+import { AddNewItem } from "./AddNewItem";
 import { useItemDrag } from "./utils/useItemDrag";
+import { useDrop } from "react-dnd";
+import { isHidden } from "./utils/isHidden";
+import { addTask, moveList, moveTask, setDraggedItem } from "./state/actions";
 
 type ColumnProps = PropsWithChildren<{
   text: string;
@@ -20,28 +19,32 @@ export const Column = ({ text, id, isPreview }: ColumnProps) => {
   const tasks = getTasksByListId(id);
   const ref = useRef<HTMLDivElement>(null);
 
-  const { drag } = useItemDrag({ type: "COLUMN", id, text });
   const [, drop] = useDrop({
     accept: ["COLUMN", "CARD"],
-    hover(item: DragItem) {
-      if (item.type === "COLUMN") {
-        if (!draggedItem) {
+    hover() {
+      if (!draggedItem) {
+        return;
+      }
+
+      if (draggedItem.type === "COLUMN") {
+        if (draggedItem.id === id) {
           return;
-        }
-        if (draggedItem.type === "COLUMN") {
-          if (draggedItem.id === id) {
-            return;
-          }
         }
         dispatch(moveList(draggedItem.id, id));
       } else {
-        if (draggedItem.columnId === id) return;
-        if (tasks.length) return;
+        if (draggedItem.columnId === id) {
+          return;
+        }
+        if (tasks.length) {
+          return;
+        }
         dispatch(moveTask(draggedItem.id, null, draggedItem.columnId, id));
         dispatch(setDraggedItem({ ...draggedItem, columnId: id }));
       }
     },
   });
+
+  const { drag } = useItemDrag({ type: "COLUMN", id, text });
 
   drag(drop(ref));
 
