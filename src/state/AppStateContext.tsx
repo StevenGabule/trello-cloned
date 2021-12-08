@@ -1,8 +1,9 @@
-import { createContext, FC, useContext, Dispatch } from "react";
+import { createContext, FC, useContext, Dispatch, useEffect } from "react";
 import { useImmerReducer } from "use-immer";
 import { Action } from "./actions";
 import { AppState, AppStateReducer, List, Task } from "./appStateReducer";
 import { DragItem } from "../DragItem";
+import { save } from "../api";
 
 type AppStateContextProps = {
   draggedItem: DragItem | null;
@@ -38,6 +39,11 @@ export const AppStateProvider: FC = ({ children }) => {
   const [state, dispatch] = useImmerReducer(AppStateReducer, appData);
   const { lists, draggedItem } = state;
   const getTasksByListId = (id: string) => lists.find((list) => list.id === id)?.tasks || [];
+
+  useEffect(() => {
+    save(state);
+  }, [state]);
+
   return <AppStateContext.Provider value={{ lists, getTasksByListId, dispatch, draggedItem }}>{children}</AppStateContext.Provider>;
 };
 
